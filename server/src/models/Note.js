@@ -26,7 +26,7 @@ const noteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 🔥 Enable full-text search
+// 🔥 Full-text search index
 noteSchema.index({ title: "text", content: "text" });
 
 export default mongoose.model("Note", noteSchema);

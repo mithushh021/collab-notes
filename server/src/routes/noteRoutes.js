@@ -1,17 +1,26 @@
 import express from "express";
+import { protect } from "../middleware/authMiddleware.js";
 import {
   createNote,
   getNotes,
   updateNote,
   deleteNote,
+  addCollaborator,
+  searchNotes,
 } from "../controllers/noteController.js";
-import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", protect, createNote);
-router.get("/", protect, getNotes);
-router.put("/:id", protect, updateNote);
-router.delete("/:id", protect, deleteNote);
+router.route("/")
+  .post(protect, createNote)
+  .get(protect, getNotes);
+
+router.get("/search", protect, searchNotes);
+
+router.route("/:id")
+  .put(protect, updateNote)
+  .delete(protect, deleteNote);
+
+router.put("/:id/collaborate", protect, addCollaborator);
 
 export default router;
