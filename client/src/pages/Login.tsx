@@ -20,7 +20,7 @@ const Login = () => {
 
       login(data.token);
       localStorage.setItem("token", data.token);
-window.location.href = "/notes";
+window.location.href = "/dashboard";
       navigate("/dashboard");
     } catch (error) {
       alert("Login failed");

@@ -28,7 +28,7 @@ export const getNotes = async (req, res) => {
         { owner: req.user._id },
         { collaborators: req.user._id },
       ],
-    }).sort({ updatedAt: -1 });
+    });
 
     res.json(notes);
   } catch (error) {
@@ -71,11 +71,14 @@ export const deleteNote = async (req, res) => {
   try {
     const note = await Note.findById(req.params.id);
 
-    if (!note)
+    if (!note) {
       return res.status(404).json({ message: "Note not found" });
+    }
 
-    if (note.owner.toString() !== req.user._id.toString())
+    // ✅ Check if logged user is OWNER
+    if (note.owner.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Only owner can delete" });
+    }
 
     await note.deleteOne();
 
@@ -91,18 +94,24 @@ Only owner can add
 */
 export const addCollaborator = async (req, res) => {
   try {
+    const { email } = req.body;
+
     const note = await Note.findById(req.params.id);
 
-    if (!note)
+    if (!note) {
       return res.status(404).json({ message: "Note not found" });
+    }
 
-    if (note.owner.toString() !== req.user._id.toString())
+    // ✅ Only owner can add collaborators
+    if (note.owner.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Only owner can add collaborators" });
+    }
 
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email });
 
-    if (!user)
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
 
     if (!note.collaborators.includes(user._id)) {
       note.collaborators.push(user._id);
@@ -114,7 +123,6 @@ export const addCollaborator = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 /*
 SEARCH NOTES
 */
